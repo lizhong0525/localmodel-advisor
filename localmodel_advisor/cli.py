@@ -33,7 +33,7 @@ VERDICT_LABELS = {
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="localmodel-advisor",
+        prog="python -m localmodel_advisor",
         description="Transparent memory estimator for running local LLMs. Estimates, not benchmarks.",
     )
     sub = parser.add_subparsers(dest="command", required=True)
@@ -150,7 +150,7 @@ def cmd_import(args) -> int:
 def cmd_benchmarks(args) -> int:
     records = list_benchmarks()
     if not records:
-        print("No benchmarks imported yet. Add some with: localmodel-advisor import <file.json>")
+        print("No benchmarks imported yet. Add some with: python -m localmodel_advisor import <file.json>")
         return 0
     print(f"{len(records)} community benchmark record(s):")
     for r in records:

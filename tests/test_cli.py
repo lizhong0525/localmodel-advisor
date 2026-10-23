@@ -143,5 +143,24 @@ class TestFormatsCommand(unittest.TestCase):
         self.assertIn("bytes/param", out)
 
 
+class TestHelpText(unittest.TestCase):
+    def test_prog_matches_documented_invocation(self):
+        # README only documents `python -m localmodel_advisor`; usage lines
+        # and hints must not reference a console script that does not exist.
+        from localmodel_advisor.cli import build_parser
+        self.assertEqual(build_parser().prog, "python -m localmodel_advisor")
+
+    def test_empty_benchmarks_hint_uses_module_invocation(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        os.environ["LOCALMODEL_ADVISOR_DB"] = str(Path(self._tmp.name) / "store.json")
+        try:
+            code, out, err = run_cli(["benchmarks"])
+        finally:
+            os.environ.pop("LOCALMODEL_ADVISOR_DB", None)
+            self._tmp.cleanup()
+        self.assertEqual(code, 0, err)
+        self.assertIn("python -m localmodel_advisor import", out)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -27,7 +27,7 @@ Requires Python 3.10+. No installation step: run it from the repo directory, or 
 2. **Get an exact KV-cache figure by supplying the architecture** (values from the model's `config.json`):
 
    ```bash
-   python -m localmodel_advisor estimate --vram 12 --ram 32 --params 7 --quant q4_k_m --context 4096 \
+   python -m localmodel_advisor estimate --vram 12 --ram 32 --params 7 --quant q4_k_m --context 4096 --backend llama.cpp \
        --layers 32 --kv-heads 32 --head-dim 128 --html report.html
    ```
 
