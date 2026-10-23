@@ -59,6 +59,32 @@ class TestEstimateCommand(unittest.TestCase):
         self.assertEqual(code, 0, err)
         self.assertIn("exact formula", out)
 
+    def test_partial_arch_warns(self):
+        code, out, err = run_cli([
+            "estimate", "--vram", "12", "--ram", "32", "--params", "7",
+            "--quant", "q4_k_m", "--context", "2048", "--layers", "32",
+        ])
+        self.assertEqual(code, 0, err)
+        self.assertIn("incomplete architecture", err)
+        self.assertIn("HEURISTIC", out)
+
+    def test_negative_arch_rejected(self):
+        code, out, err = run_cli([
+            "estimate", "--vram", "12", "--ram", "32", "--params", "7",
+            "--quant", "q4_k_m", "--context", "2048",
+            "--layers", "-32", "--kv-heads", "32", "--head-dim", "128",
+        ])
+        self.assertEqual(code, 2)
+        self.assertIn("positive integer", err)
+
+    def test_nonfinite_params_rejected(self):
+        code, out, err = run_cli([
+            "estimate", "--vram", "12", "--ram", "32", "--params", "nan",
+            "--quant", "q4_k_m", "--context", "4096",
+        ])
+        self.assertEqual(code, 2)
+        self.assertIn("finite", err)
+
     def test_html_report_written(self):
         html_path = Path(self._tmp.name) / "report.html"
         code, out, err = run_cli([

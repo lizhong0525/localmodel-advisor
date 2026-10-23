@@ -173,6 +173,16 @@ class TestMatching(unittest.TestCase):
         # tokens_per_second missing here is fine for matching; validate separately
         self.assertEqual(find_matching(recs, 7, "q4_k_m", "ollama"), recs)
 
+    def test_malformed_records_skipped_not_crashing(self):
+        # A hand-edited or corrupt store must not crash estimate's lookup.
+        recs = [
+            {"gpu": "G", "vram_gb": "twelve", "params_b": 7, "quant": 5, "backend": "llama.cpp"},
+            {"params_b": "seven", "quant": "q4_k_m", "backend": "llama.cpp"},
+            "not-a-dict",
+            {"params_b": 7, "quant": "q4_k_m", "backend": "llama.cpp", "gpu": "OK"},
+        ]
+        self.assertEqual(find_matching(recs, 7, "q4_k_m", "llama.cpp"), [recs[3]])
+
 
 if __name__ == "__main__":
     unittest.main()

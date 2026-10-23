@@ -45,6 +45,11 @@ class TestWeightEstimation(unittest.TestCase):
         with self.assertRaises(EstimationError):
             estimate_weights("seven", "fp16")
 
+    def test_nonfinite_params_raise(self):
+        for bad in (float("nan"), float("inf"), float("-inf")):
+            with self.assertRaises(EstimationError):
+                estimate_weights(bad, "fp16")
+
     def test_scales_linearly(self):
         self.assertAlmostEqual(
             estimate_weights(14, "q8_0").low_gib, estimate_weights(7, "q8_0").low_gib * 2, places=2
@@ -84,6 +89,15 @@ class TestKVCacheExact(unittest.TestCase):
     def test_unknown_kv_dtype_raises(self):
         with self.assertRaises(EstimationError):
             estimate_kv_cache(2048, 7, self.arch, "int3")
+
+    def test_nonpositive_arch_values_raise(self):
+        for bad_arch in (
+            Architecture(-32, 32, 128),
+            Architecture(32, 0, 128),
+            Architecture(32, 32, -128),
+        ):
+            with self.assertRaises(EstimationError):
+                estimate_kv_cache(2048, 7, bad_arch, "fp16")
 
 
 class TestKVCacheHeuristic(unittest.TestCase):

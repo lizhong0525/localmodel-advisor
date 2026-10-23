@@ -127,20 +127,29 @@ def list_benchmarks(store_path: str | Path | None = None) -> list[dict]:
 
 
 def find_matching(records: list[dict], params_b: float, quant: str, backend: str, vram_gb: Optional[float] = None) -> list[dict]:
-    """Find community records roughly matching a configuration."""
+    """Find community records roughly matching a configuration.
+
+    Malformed records (e.g. from a hand-edited store file) are skipped
+    rather than crashing the estimate command.
+    """
     matches = []
     for rec in records:
+        if not isinstance(rec, dict):
+            continue
         try:
             rec_params = float(rec.get("params_b", 0))
+            rec_quant = str(rec.get("quant", ""))
+            rec_backend = str(rec.get("backend", ""))
+            rec_vram = float(rec.get("vram_gb", 0))
         except (TypeError, ValueError):
             continue
-        if rec.get("quant", "").lower() != quant.lower():
+        if rec_quant.lower() != quant.lower():
             continue
-        if rec.get("backend", "").lower() != backend.lower():
+        if rec_backend.lower() != backend.lower():
             continue
         if abs(rec_params - params_b) / max(params_b, 0.1) > 0.35:
             continue
-        if vram_gb is not None and float(rec.get("vram_gb", 0)) < params_b:  # coarse sanity filter
+        if vram_gb is not None and rec_vram < params_b:  # coarse sanity filter
             continue
         matches.append(rec)
     return matches

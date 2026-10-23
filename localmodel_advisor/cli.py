@@ -68,6 +68,14 @@ def _fmt_range(r) -> str:
 
 def cmd_estimate(args) -> int:
     arch = Architecture(args.layers, args.kv_heads, args.head_dim)
+    if not arch.is_complete() and any(
+        v is not None for v in (arch.n_layers, arch.n_kv_heads, arch.head_dim)
+    ):
+        print(
+            "warning: incomplete architecture details (need all of --layers, "
+            "--kv-heads and --head-dim); falling back to the heuristic KV estimate",
+            file=sys.stderr,
+        )
     result = estimate(
         vram_gib=args.vram,
         ram_gib=args.ram,
@@ -116,8 +124,8 @@ def cmd_estimate(args) -> int:
             for m in matches:
                 ctx = f", ctx {m['context_tokens']}" if m.get("context_tokens") else ""
                 print(
-                    f"  - {m['tokens_per_second']} tok/s on {m['gpu']} "
-                    f"({m['vram_gb']} GB VRAM{ctx}) [{m['backend']}, {m['model']}]"
+                    f"  - {m.get('tokens_per_second', '?')} tok/s on {m.get('gpu', '?')} "
+                    f"({m.get('vram_gb', '?')} GB VRAM{ctx}) [{m.get('backend', '?')}, {m.get('model', '?')}]"
                     + (f" -- {m['notes']}" if m.get("notes") else "")
                 )
             print("  (measured results contributed by users; your hardware may differ)")

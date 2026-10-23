@@ -25,6 +25,7 @@ hardware, backend, and driver state, and must come from real benchmarks
 from __future__ import annotations
 
 from dataclasses import dataclass, field, asdict
+import math
 from typing import Optional
 
 GiB = 1024 ** 3
@@ -183,6 +184,8 @@ def _positive(value: float, name: str) -> float:
         v = float(value)
     except (TypeError, ValueError):
         raise EstimationError(f"{name} must be a number, got {value!r}")
+    if not math.isfinite(v):
+        raise EstimationError(f"{name} must be a finite number, got {v}")
     if v <= 0:
         raise EstimationError(f"{name} must be positive, got {v}")
     return v
@@ -235,6 +238,9 @@ def estimate_kv_cache(
     dtype_bytes = KV_DTYPES[key]
 
     if arch is not None and arch.is_complete():
+        for name, v in (("layers", arch.n_layers), ("kv_heads", arch.n_kv_heads), ("head_dim", arch.head_dim)):
+            if not isinstance(v, int) or isinstance(v, bool) or v <= 0:
+                raise EstimationError(f"architecture field {name} must be a positive integer, got {v!r}")
         per_token = (
             2 * arch.n_layers * arch.n_kv_heads * arch.head_dim * dtype_bytes
         )
