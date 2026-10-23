@@ -1,0 +1,39 @@
+[
+  {
+    "gpu": "NVIDIA RTX 3060 12GB",
+    "vram_gb": 12,
+    "ram_gb": 32,
+    "model": "Llama-2-7B-chat",
+    "params_b": 6.7,
+    "quant": "q4_k_m",
+    "backend": "llama.cpp",
+    "context_tokens": 4096,
+    "tokens_per_second": 38.5,
+    "kv_dtype": "fp16",
+    "cpu": "Ryzen 5 5600X",
+    "os": "Windows 11",
+    "notes": "Full GPU offload, default llama.cpp build",
+    "date": "2024-11-02"
+  },
+  {
+    "gpu": "NVIDIA RTX 4090",
+    "vram_gb": 24,
+    "ram_gb": 64,
+    "model": "Llama-2-13B-chat",
+    "params_b": 13.0,
+    "quant": "q4_k_m",
+    "backend": "llama.cpp",
+    "context_tokens": 2048,
+    "tokens_per_second": 41.2,
+    "notes": "Community contribution example"
+  },
+  {
+    "gpu": "Apple M2 Pro",
+    "vram_gb": 16,
+    "model": "Mistral-7B-Instruct",
+    "params_b": 7.2,
+    "quant": "q8_0",
+    "backend": "ollama",
+    "tokens_per_second": 22.0
+  }
+]

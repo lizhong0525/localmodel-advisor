@@ -1,0 +1,7 @@
+[
+  {"gpu": "RTX 3060", "vram_gb": 12, "model": "X", "params_b": 7, "quant": "q4_k_m", "backend": "llama.cpp"},
+  {"gpu": "RTX 4090", "vram_gb": -5, "model": "Y", "params_b": 13, "quant": "q4_k_m", "backend": "llama.cpp", "tokens_per_second": 40},
+  {"gpu": "", "vram_gb": 8, "model": "Z", "params_b": 7, "quant": "q4_k_m", "backend": "ollama", "tokens_per_second": 10},
+  ["not", "an", "object"],
+  {"gpu": "A", "vram_gb": 8, "model": "W", "params_b": 7, "quant": "q4_k_m", "backend": "ollama", "tokens_per_second": 10, "bogus_field": 1}
+]
